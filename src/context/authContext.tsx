@@ -1,5 +1,5 @@
 import * as React from "react";
-import {createContext, useContext, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import {ContextType, User} from "../types";
 import * as authService from "../services/auth.service";
 
@@ -8,6 +8,26 @@ export const AuthContext = createContext<ContextType | null>(null);
 export const AuthProvider: React.FC<{}> = ({ children }) =>  {
     const [user, setUser] = useState<User | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    useEffect(() => {
+
+    }, []);
+
+    useEffect(() => {
+        async function fetchUserData() {
+            try {
+                const userData = await authService.getProfile();
+                if (userData) {
+                    setUser(userData);
+                }
+            } catch (err) {
+                console.warn('User is not logged in');
+            }
+
+        }
+        fetchUserData()
+    }, [])
+
 
     const signin = async  (username: string, password: string, cb: Function) => {
         try {
